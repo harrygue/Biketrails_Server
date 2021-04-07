@@ -28,11 +28,11 @@ const categories = [{'categoryID':0,'categoryName':'All'},
                     {'categoryID':7,'categoryName':'Walking'}];
 
 var NodeGeocoder = require('node-geocoder')
-GEOCODER_API_KEY='AIzaSyAZQu-cS5V1p3NN2t-ECg_21h8SB6z03bo'
+
 var options = {
   provider: 'google',
   httpAdapter: 'https',
-  apiKey: GEOCODER_API_KEY || process.env.GEOCODER_API_KEY,
+  apiKey: process.env.GEOCODER_API_KEY,
   formatter: null
 };
  
