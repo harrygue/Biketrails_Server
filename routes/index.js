@@ -49,9 +49,7 @@ router.post("/register",(req,res) => {
     User.register(newUser, req.body.password, function(err,user){
         if(err){
             console.log("Hoppla \n", err);
-            // req.flash("error",err.message);
-            // return res.render("register");
-            res.status(401).json("error",err.message)
+            res.status(401).send({message:err.message})
         }
         passport.authenticate("local")(req,res,function(){
             const token = jwt.sign({username: req.user.username,userId:req.user._id},process.env.JWT_SECRET,{expiresIn:'1h'})

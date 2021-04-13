@@ -22,6 +22,7 @@ middleware.isLoggedIn = (req,res,next) => {
         next()
     } catch(err){
         console.error('ERROR IN AUTH: ',err)
+        res.status(401).send({message:'Unauthorized User !!!'})
     }
 };
 
