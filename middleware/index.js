@@ -22,7 +22,7 @@ middleware.isLoggedIn = (req,res,next) => {
         next()
     } catch(err){
         console.error('ERROR IN AUTH: ',err)
-        res.status(401).send({message:'Unauthorized User !!!'})
+        res.status(401).send({error})
     }
 };
 
@@ -60,7 +60,7 @@ middleware.checkBiketrailOwnership = async (req,res,next) => {
         }
     } catch(error){
         console.error('ERROR IN middleware.checkBiketrailOwnership: ',error)
-        res.status(404).send(error)
+        res.status(401).json({error})
     }
 };
 

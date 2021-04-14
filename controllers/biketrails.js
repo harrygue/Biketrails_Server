@@ -81,15 +81,9 @@ const getBikeTrails = async(req,res) => {
     } catch(error) {
         console.log("Error at Index route: ",error.message);
         // req.flash("error","ERROR: cannot get biketrails!");
+        res.json({error})
     }
 };
-
-// NEW biketrail form - OBSOLETE 
-// router.get("/new",middleware.isLoggedIn,(req,res) => {
-//     res.render("biketrails/new",{
-//         categories:JSON.stringify(categories)
-//     });
-// });
 
 // ASYNC/AWAIT
 // SHOW Biketrail form
@@ -115,25 +109,9 @@ const getBikeTrail = async(req,res) => {
     } catch (error){
         console.log("Error at show route: ",error.message);
         // req.flash("error","ERROR: cannot show biketrail!");
+        res.status(404).json({error})
     }
 };
-
-// Edit Biketrail
-// router.get("/:id/edit",middleware.checkBiketrailOwnership,
-const editBikeTrail = async(req,res) => {
-    console.log("hit edit route");
-    try {
-        let foundBiketrail = await Biketrail.findById(req.params.id);
-
-        res.status(200).json({
-            biketrail:foundBiketrail,
-            categories:JSON.stringify(categories)
-        });
-    } catch (error) {
-        console.log("ERROR: cannot get edit view!",error);
-        // req.flash("error","ERROR: cannot get edit view!");
-    }
-}
 
 // CREATE NEW BIKETRAIL AND UPLOAD GPX TRACKS (ASYNC/AWAIT)
 // -------------------------------------------------------------------------
@@ -159,9 +137,7 @@ const createBikeTrail = async(req,res) => {
         let geoData = newBiketrail.location ? await geocoder.geocode(newBiketrail.location) : null;
         console.log(geoData)
         if(!geoData){
-            console.log("no geodata");
-            // req.flash("error","Invalid address!");
-            // return res.redirect("back");
+            console.log("no geodata"); // biketrail will be created anyway
         } else {
             console.log("geocode data found!");
             newBiketrail.lat = geoData[0].latitude;
@@ -170,14 +146,12 @@ const createBikeTrail = async(req,res) => {
         }
 
         let biketrail = await Biketrail.create(newBiketrail);
-
-        // req.flash("success","Successfully created new biketrail: " + biketrail.name);
-        res.status(200).json({"message":"Successfully created new biketrail:"});
+        // res.status(200).json({"message":"Successfully created new biketrail:"});
+        res.status(200).json({biketrail});
 
     } catch (error){
         console.log("ERROR IN CREATE NEW BIKETRAIL: ",error);
-        res.status(409).json({error})
-        // req.flash("error","Cannot create biketrail due to error!");
+        res.status(409).json({error}) // conflict
     }  
 };
 
@@ -207,8 +181,7 @@ const updateBikeTrail = async(req,res) => {
         let geoData = req.body.location && await geocoder.geocode(req.body.location);
         if(!geoData){
             console.log("no geodata");
-            //req.flash("error","Invalid address!");
-            //return res.redirect("back");
+            res.status(204).json({message:'No Geodata'})
         } else {
             console.log("geocode data found!");
             updatedBiketrail.lat = geoData[0].latitude;
@@ -217,16 +190,11 @@ const updateBikeTrail = async(req,res) => {
         }
 
         let biketrail = await Biketrail.findByIdAndUpdate(req.params.id,updatedBiketrail);
-
-        // console.log(`req.body.id: ${req.body.id}, req.params.id: ${req.params.id}`);
-        // req.flash("success","Successfully updated biketrail: " +req.body.biketrail.name);
         res.status(200).json({biketrail});
 
     } catch (error) {
         console.log("Error in edit Biketrail: ",error);
         res.status(409).json({error})
-        // req.flash("error","ERROR: cannot update biketrail!");
-        // res.redirect("/biketrails");
     }
 };
 
@@ -271,8 +239,7 @@ const deleteBikeTrail = async(req,res) => {
 
     } catch (error){
         console.log("Error in delete Biketrail: ",error);
-        // req.flash("error","ERROR: cannot delete biketrail!");
-        // res.redirect("/biketrails");
+        res.status(409).json({error})
     }
 };
 
@@ -282,4 +249,4 @@ function escapeRegex(text) {
 };
 
 
-module.exports = {getBikeTrails,getBikeTrail,editBikeTrail,createBikeTrail,updateBikeTrail,deleteBikeTrail}
+module.exports = {getBikeTrails,getBikeTrail,createBikeTrail,updateBikeTrail,deleteBikeTrail}

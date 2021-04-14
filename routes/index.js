@@ -46,10 +46,11 @@ router.post("/register",(req,res) => {
     if(req.body.adminCode === process.env.ADMIN){
         newUser.isAdmin = true;
     }
-    User.register(newUser, req.body.password, function(err,user){
-        if(err){
-            console.log("Hoppla \n", err);
-            res.status(401).send({message:err.message})
+    User.register(newUser, req.body.password, function(error,user){
+        if(error){
+            // throw error
+            console.log("Hoppla \n", error);
+            res.status(401).json({error})
         }
         passport.authenticate("local")(req,res,function(){
             const token = jwt.sign({username: req.user.username,userId:req.user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
@@ -62,7 +63,10 @@ router.post("/register",(req,res) => {
 router.post('/login',(req,res,next) => {
     console.log('HIT LOGIN: ',req.body)
     passport.authenticate('local',(err,user,info) => {
-        if(err) throw err;
+        if(err) {
+            console.log("Hoppla \n", err);
+            res.status(401).json({error})
+        };
         if(!user) res.send({message:'No User Exists'});
         else {
             req.login(user, (err) => {

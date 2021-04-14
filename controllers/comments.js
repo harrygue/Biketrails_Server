@@ -6,17 +6,6 @@ const { copySync } = require("fs-extra");
 
 // Comments - New Form
 
-// router.get("/new",middleware.isLoggedIn,async(req,res) => {
-//     try {
-//         let biketrail = await Biketrail.findById(req.params.id);
-//         res.render("comments/new",{biketrail:biketrail,});
-//     } catch(error){
-//         console.log("Error at new comments:",error);
-//         req.flash("error","ERROR: cannot get comment form!");
-//         res.redirect("/biketrails");
-//     }
-// });
-
 // router.post("/",middleware.isLoggedIn,
 const createComment = async(req,res) => {
     console.log('hit Create Comment')
@@ -32,14 +21,10 @@ const createComment = async(req,res) => {
         foundBiketrail.comments.push(comment);
         foundBiketrail.save();
         console.log("created new comment for biketrail: \n",foundBiketrail.name);
-        // req.flash("success","Successfully created comment!");
-        //res.redirect("/biketrails/" + req.params.id);
         res.status(201).json({message:'Created Comment'})
     } catch (error){
         console.log("Error at post new comment route in find biketrail: ",error);
-        // req.flash("error","ERROR: cannot create comment!");
-        // res.redirect("/biketrails");
-        res.status(409).json({"ERROR":error})
+        res.status(409).json({error})
     }
 };
 
@@ -62,7 +47,7 @@ const getComment = async(req,res) => {
         console.log("ERROR: cannot get edit view!",error);
         // req.flash("error","ERROR: cannot get edit view!");
         // res.redirect("/biketrails");
-        res.status(409).json({"ERROR":error})
+        res.status(409).json({error})
     }
 };
 
@@ -75,14 +60,12 @@ const updateComment = async(req,res) => {
         commentToUpdate.text = req.body.comment
         let comment = await Comment.findByIdAndUpdate(req.params.comment_id,commentToUpdate);
         console.log("Comment updated");
-        // req.flash("success","successfully updated comment!");
-        // res.redirect("/biketrails/"+req.params.id);
         res.status(200).json({message:'Comment updated!'})
     } catch (error) {
         console.log("ERROR: cannot update comment! ",error);
         // req.flash("error","ERROR: cannot update comment!");
         // res.redirect("/biketrails");
-        res.status(404).json({"ERROR":error})
+        res.status(404).json({error})
     }
 };
 
@@ -93,14 +76,10 @@ const deleteComment = async(req,res) => {
     try {
         await Comment.findByIdAndDelete(req.params.comment_id);
         console.log("Comment deleted");
-        // req.flash("success","comment deleted!");
-        // res.redirect("back");
         res.status(201).json({message:'Comment deleted'})
     } catch (error) {
         console.log("ERROR: cannot delete comment! ",error);
-        // req.flash("error","ERROR: cannot delete comment!");
-        // res.redirect("/biketrails");
-        res.status(409).json({"ERROR":error})
+        res.status(409).json({error})
     }
 };
 

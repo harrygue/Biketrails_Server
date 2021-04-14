@@ -32,7 +32,7 @@ var gpxUpload = multer({
 
 router.get('/',getBikeTrails)
 router.get("/:id",getBikeTrail)
-router.get("/:id/edit",middleware.checkBiketrailOwnership,editBikeTrail)
+// router.get("/:id/edit",middleware.checkBiketrailOwnership,editBikeTrail)
 router.post("/",middleware.isLoggedIn,gpxUpload.single('gpxFile'),createBikeTrail) 
 // router.post("/",middleware.isLoggedIn,gpxUpload.any(),createBikeTrail) // test
 router.put("/:id",middleware.checkBiketrailOwnership,gpxUpload.single('gpxFile'),updateBikeTrail)
