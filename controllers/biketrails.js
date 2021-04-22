@@ -190,7 +190,7 @@ const updateBikeTrail = async(req,res) => {
             updatedBiketrail.location = geoData[0].formattedAddress;
         }
 
-        let biketrail = await Biketrail.findByIdAndUpdate(req.params.id,updatedBiketrail);
+        let biketrail = await Biketrail.findByIdAndUpdate(req.params.id,updatedBiketrail,{new:true}); // new option to return updated biketral
         console.log('UPDATED biketrail: ',biketrail.gpxFileName)
         console.log(biketrail.name)
         res.status(200).json({biketrail});
