@@ -60,12 +60,12 @@ const createImage = async(req,res) => {
         console.log("created new image for Biketrail ",foundBiketrail.name);
         // req.flash("success","Image added");
         // res.redirect("/biketrails/"+req.params.id);
-        res.status(201).json({message:'Image added'})
+        res.status(201).json({biketrail:foundBiketrail})
     } catch (error) {
         console.log("ERROR: cannot upload image! ",error);
         //req.flash("error","ERROR: cannot upload image!");
         //res.redirect("/biketrails");
-        res.status(409).json({"ERROR":error})
+        res.status(409).json({error})
     }
 };
 

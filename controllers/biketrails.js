@@ -147,6 +147,7 @@ const createBikeTrail = async(req,res) => {
 
         let biketrail = await Biketrail.create(newBiketrail);
         // res.status(200).json({"message":"Successfully created new biketrail:"});
+        
         res.status(200).json({biketrail});
 
     } catch (error){
@@ -190,6 +191,8 @@ const updateBikeTrail = async(req,res) => {
         }
 
         let biketrail = await Biketrail.findByIdAndUpdate(req.params.id,updatedBiketrail);
+        console.log('UPDATED biketrail: ',biketrail.gpxFileName)
+        console.log(biketrail.name)
         res.status(200).json({biketrail});
 
     } catch (error) {
