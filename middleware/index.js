@@ -102,40 +102,4 @@ middleware.checkCommentOwnership = async (req,res,next) => {
 }
 
 
-/*
-middleware.checkCommentOwnership = (req,res,next) => {
-    console.log("check commentOwnership called!");
-    console.log("Show req object:",req);
-    if(req.isAuthenticated()){
-        Comment.findById(req.params.comment_id,(err,foundComment) => {
-            // console.log("Found Commment in middleware.checkCommentOwnership:",foundComment);
-            if(err){
-                // req.flash("error","Something went wrong when trying to access this comment!");
-                console.log("Error in middleware.checkCommentOwnership",err);
-            } else {
-                const commentOwner_id = foundComment.author.id;
-                const user_id = req.user._id;
-                const currentUser = req.user;
-                console.log("commentOwner_id: ",commentOwner_id);
-                console.log("user_id: ",user_id);
-                if(commentOwner_id !== undefined && commentOwner_id.equals(user_id) || currentUser && currentUser.isAdmin){
-                    console.log("Comment Owner okay!");
-                    next();
-                }
-                else {
-                    console.log("You are not the CommentOwner and are not allowed to do that!");
-                    // req.flash("error","You don't have permission to do that!");
-                    // res.redirect("back");
-                }
-            }
-        });
-    } else {
-        // temporary for dev without login
-        console.log('--------------- call temporarily next() ----------------')
-        //next()
-        // res.redirect("/login");
-        res.send({message:'not authenicated'})
-    }
-};
-*/
 module.exports = middleware;
