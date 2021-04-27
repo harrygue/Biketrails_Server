@@ -76,7 +76,7 @@ const deleteComment = async(req,res) => {
     try {
         await Comment.findByIdAndDelete(req.params.comment_id);
         console.log("Comment deleted");
-        res.status(201).json({message:'Comment deleted'})
+        res.status(200).json({message:'Comment deleted'})
     } catch (error) {
         console.log("ERROR: cannot delete comment! ",error);
         res.status(409).json({error})

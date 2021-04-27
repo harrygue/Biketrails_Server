@@ -107,7 +107,7 @@ const getBikeTrail = async(req,res) => {
         });
 
     } catch (error){
-        console.log("Error at show route: ",error.message);
+        console.log("Error at show route: ",error);
         // req.flash("error","ERROR: cannot show biketrail!");
         res.status(404).json({error})
     }

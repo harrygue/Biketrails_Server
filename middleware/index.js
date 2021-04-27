@@ -55,7 +55,7 @@ middleware.checkBiketrailOwnership = async (req,res,next) => {
                 console.log("You are not the bikeTrailOwner and are not allowed to do that!");
                 // req.flash("error","You don't have permission to do that!");
                 // res.redirect("back");
-                res.status(300).json({message:'You are not the bikeTrailOwner and are not allowed to do that!'})
+                res.send({message:'not authorized'})
             }
         }
     } catch(error){
@@ -65,14 +65,52 @@ middleware.checkBiketrailOwnership = async (req,res,next) => {
 };
 
 // check Comment Ownership
+middleware.checkCommentOwnership = async (req,res,next) => {
+    try{
+        console.log("checkCommentOwnership called!");
+        const token = req.headers.authorization.split(" ")[1]
+    
+        // evtl. if statement to check if token exists
+        let decodedData = jwt.verify(token,process.env.JWT_SECRET)
+
+        if(decodedData){
+            console.log(decodedData)
+            const user_id = decodedData.userId // check if this is userId or something else
+            console.log("user_id: ",user_id);
+            const username = decodedData.username
+            const foundComment = await Comment.findById(req.params.comment_id)
+            console.log("Found Comment in middleware.checkCommentOwnership:");
+            const currentUser = await User.findById(user_id)
+            console.log('User: ',currentUser)
+            const commentOwner_id = foundComment.author.id;
+            console.log("commentOwner_id: ",commentOwner_id);
+            if(commentOwner_id && commentOwner_id.equals(user_id) || currentUser && currentUser.isAdmin){
+                console.log("Comment Owner okay!");
+                next();
+            }
+            else {
+                console.log("You are not the commentOwner and are not allowed to do that!");
+                // req.flash("error","You don't have permission to do that!");
+                // res.redirect("back");
+                res.send({message:'not authorized'})
+            }
+        }
+    } catch(error){
+        console.error('ERROR IN middleware.checkBiketrailOwnership: ',error)
+        res.status(401).json({error})
+    }
+}
+
+
+/*
 middleware.checkCommentOwnership = (req,res,next) => {
     console.log("check commentOwnership called!");
-    // console.log("Show req object:",req);
+    console.log("Show req object:",req);
     if(req.isAuthenticated()){
         Comment.findById(req.params.comment_id,(err,foundComment) => {
             // console.log("Found Commment in middleware.checkCommentOwnership:",foundComment);
             if(err){
-                req.flash("error","Something went wrong when trying to access this comment!");
+                // req.flash("error","Something went wrong when trying to access this comment!");
                 console.log("Error in middleware.checkCommentOwnership",err);
             } else {
                 const commentOwner_id = foundComment.author.id;
@@ -86,17 +124,18 @@ middleware.checkCommentOwnership = (req,res,next) => {
                 }
                 else {
                     console.log("You are not the CommentOwner and are not allowed to do that!");
-                    req.flash("error","You don't have permission to do that!");
-                    res.redirect("back");
+                    // req.flash("error","You don't have permission to do that!");
+                    // res.redirect("back");
                 }
             }
         });
     } else {
         // temporary for dev without login
         console.log('--------------- call temporarily next() ----------------')
-        next()
+        //next()
         // res.redirect("/login");
+        res.send({message:'not authenicated'})
     }
 };
-
+*/
 module.exports = middleware;
