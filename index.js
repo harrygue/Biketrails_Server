@@ -63,7 +63,7 @@ app.use('/',indexRoutes)
 
 // temporary:
 app.use(function(req,res,next){
-    res.locals.currentUser = req.user; // {id:"5e1b376eebb09a36303fbdb6",userName:"Adminuser"}
+    res.locals.currentUser = req.user; 
     // res.locals.error = req.flash("error");
     // res.locals.success = req.flash("success");
     // res.locals.helper = helper;
@@ -71,6 +71,8 @@ app.use(function(req,res,next){
     console.log('index.js/server 66: CURRENT USER: ',req.user)
     next();
 });
+
+
 
 // connect do DB
 const connectionString = process.env.DATABASEURL;
