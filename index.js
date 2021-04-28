@@ -21,10 +21,11 @@ const app = express();
 app.use(bodyParser.json()) // limit: "30mb",{extended:true}
 app.use(bodyParser.urlencoded({extended:true,strict:false})) // test: true -> false; limit: "30mb",
 app.use(express.static(__dirname + "/public"));
-app.use(cors({
-    origin: 'http://localhost:3000', // client
-    credentials: true,
-}));
+app.use(cors())
+//app.use(cors({
+//    origin: 'http://localhost:3000', // client
+//    credentials: true,
+//}));
 
 app.use(function(req, res, next) {
     console.log('set access control headers')
