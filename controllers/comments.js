@@ -14,7 +14,7 @@ const createComment = async(req,res) => {
         let newComment = {}
         newComment.text = req.body.comment;
         newComment.creation_date = moment().format();
-        newComment.author = {id:"5e1b376eebb09a36303fbdb6",userName:"Adminuser"}// {id:req.user._id,userName:req.user.username};
+        newComment.author = {id:req.userId,userName:req.username};// {id:req.user._id,userName:req.user.username};
         let foundBiketrail = await Biketrail.findById(req.params.id);
         console.log(newComment)
         let comment = await Comment.create(newComment);
