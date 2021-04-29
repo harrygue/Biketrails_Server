@@ -80,17 +80,14 @@ const getBikeTrails = async(req,res) => {
 
     } catch(error) {
         console.log("Error at Index route: ",error.message);
-        // req.flash("error","ERROR: cannot get biketrails!");
         res.json({error})
     }
 };
 
 // ASYNC/AWAIT
 // SHOW Biketrail form
-// router.get("/:id",
 const getBikeTrail = async(req,res) => {
     console.log(req.params.id)
-    // console.log(await Biketrail.findById(req.params.id))
     try {
         let user_id = undefined;
         let foundBiketrail = await Biketrail.findById(req.params.id).populate("comments").populate("images").exec();
@@ -98,7 +95,6 @@ const getBikeTrail = async(req,res) => {
         console.log("Inside Show Route: ",foundBiketrail.name);
         if(req.isAuthenticated()){
             console.log("is Authenticated !");
-            // res.render("biketrails/show",{biketrail:foundBiketrail,user_id:req.user._id});
             user_id = req.user._id;
         }
 
@@ -108,14 +104,12 @@ const getBikeTrail = async(req,res) => {
 
     } catch (error){
         console.log("Error at show route: ",error);
-        // req.flash("error","ERROR: cannot show biketrail!");
         res.status(404).json({error})
     }
 };
 
 // CREATE NEW BIKETRAIL AND UPLOAD GPX TRACKS (ASYNC/AWAIT)
 // -------------------------------------------------------------------------
-// router.post("/",middleware.isLoggedIn,gpxUpload.single('gpx'),
 const createBikeTrail = async(req,res) => {
     // upload gpx tracks
     console.log("CREATE")
@@ -126,14 +120,16 @@ const createBikeTrail = async(req,res) => {
         newBiketrail.author = {id:req.userId,userName:req.username}; // {id:"5e1b376eebb09a36303fbdb6",userName:"Adminuser"}// {id:req.user._id,userName:req.user.username};
 
         if(req.file){
+            console.log('hit req.file')
+            console.log(typeof(req.file))
             const file = fsExtra.readFileSync(req.file.path,'utf-8'); 
             newBiketrail.gpxFile = file;
             newBiketrail.gpxFileName = req.file.path;
+        } else {
+            newBiketrail.gpxFile = null;
+            newBiketrail.gpxFileName = '';
         }
-        // req.body.biketrail return the categoryID instead of categoryName
-        // newBiketrail.category = categories[req.body.biketrail.category].categoryName;
 
-        // was req.body.location
         let geoData = newBiketrail.location ? await geocoder.geocode(newBiketrail.location) : null;
         console.log(geoData)
         if(!geoData){
@@ -146,18 +142,16 @@ const createBikeTrail = async(req,res) => {
         }
 
         let biketrail = await Biketrail.create(newBiketrail);
-        // res.status(200).json({"message":"Successfully created new biketrail:"});
         
         res.status(200).json({biketrail});
 
     } catch (error){
         console.log("ERROR IN CREATE NEW BIKETRAIL: ",error);
-        res.status(409).json({error}) // conflict
+        res.status(409).send({error}) // conflict
     }  
 };
 
 // UPATE BIKETRAIL  with GPX files (ASYNC / AWAIT)
-// router.put("/:id",middleware.checkBiketrailOwnership,gpxUpload.single('gpx'),
 const updateBikeTrail = async(req,res) => {
     try {
         console.log('HIT UPDATE BT')
@@ -203,7 +197,6 @@ const updateBikeTrail = async(req,res) => {
 
 // -------------------------------------------------------------------------
 // Destroy Biketrail with GPX files (ASYNC / AWAIT)
-// router.delete("/:id",middleware.checkBiketrailOwnership,
 const deleteBikeTrail = async(req,res) => {
     try {
         let biketrail = await Biketrail.findById(req.params.id);
@@ -217,7 +210,6 @@ const deleteBikeTrail = async(req,res) => {
         if(len ===0){
             await Biketrail.findByIdAndDelete(req.params.id);
             console.log("there were no images!");
-            // req.flash("success","Biketrail and comments deleted, no images found!");
             return res.status(200).json({"message":"biketrail successfully deleted"});
         } 
 
@@ -235,7 +227,6 @@ const deleteBikeTrail = async(req,res) => {
                 await Image.deleteMany({_id: { $in: biketrail.images}});
                 await Biketrail.findByIdAndDelete(req.params.id);
                 console.log("Biketrail, comments and all images deleted!");
-                // req.flash("success","Biketrail, comments and all images deleted!");
                 return res.status(200).json({"message":"biketrail successfully deleted"});
             }
         });
