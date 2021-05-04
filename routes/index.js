@@ -52,6 +52,7 @@ router.post("/register",(req,res) => {
             console.log("Hoppla \n", error);
             res.status(401).json({error})
         }
+        // https://stackoverflow.com/questions/37629475/validationerror-expiresinminutes-is-not-allowed-nodejs-jsonwebtoken
         passport.authenticate("local")(req,res,function(){
             const token = jwt.sign({username: req.user.username,userId:req.user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
             res.status(200).send({message:req.user,token})

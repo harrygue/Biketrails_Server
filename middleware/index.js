@@ -53,8 +53,6 @@ middleware.checkBiketrailOwnership = async (req,res,next) => {
             }
             else {
                 console.log("You are not the bikeTrailOwner and are not allowed to do that!");
-                // req.flash("error","You don't have permission to do that!");
-                // res.redirect("back");
                 res.send({message:'not authorized'})
             }
         }
@@ -90,8 +88,6 @@ middleware.checkCommentOwnership = async (req,res,next) => {
             }
             else {
                 console.log("You are not the commentOwner and are not allowed to do that!");
-                // req.flash("error","You don't have permission to do that!");
-                // res.redirect("back");
                 res.send({message:'not authorized'})
             }
         }

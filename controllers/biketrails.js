@@ -170,6 +170,9 @@ const updateBikeTrail = async(req,res) => {
                 console.log('take existing gpx File')
                 updatedBiketrail.gpxFile = existingBiketrail.gpxFile
                 updatedBiketrail.gpxFileName = existingBiketrail.gpxFileName
+            } else {
+                updatedBiketrail.gpxFile = null;
+                updatedBiketrail.gpxFileName = '';
             }
         }
 
