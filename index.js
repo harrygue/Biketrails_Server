@@ -35,6 +35,12 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "https://biketrailshg-mpv1.netlify.app");// 'http://localhost:3000'
     res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('X-Xss-Protection','1; mode=block');
+    res.header('Cache-Control','no-cache, no-store, must-revalidate');
+    res.header('Pragma','no-cache');
+    res.header('Expires','-1');
+    res.header('X-Permitted-Cross-Domain-Policies','master-only');
+    res.header('Content-Security-Policy','report-uri /csp_report_parser');
     next();
 });
 
