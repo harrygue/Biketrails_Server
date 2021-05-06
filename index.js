@@ -32,7 +32,7 @@ app.use(cors())
 
 app.use(function(req, res, next) {
     console.log('set access control headers')
-    // res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header("Access-Control-Allow-Origin", "https://biketrailshg-mpv1.netlify.app");// 'http://localhost:3000'
     res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
