@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
+const helmet = require('helmet');
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const cors = require('cors')
@@ -17,6 +18,8 @@ const expressSession = require('express-session')
 const cookieParser = require('cookie-parser')
 
 const app = express();
+
+app.use(helmet());
 
 app.use(bodyParser.json()) // limit: "30mb",{extended:true}
 app.use(bodyParser.urlencoded({extended:true,strict:false})) // test: true -> false; limit: "30mb",
