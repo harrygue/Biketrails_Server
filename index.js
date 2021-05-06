@@ -40,7 +40,7 @@ app.use(function(req, res, next) {
     res.header('Pragma','no-cache');
     res.header('Expires','-1');
     res.header('X-Permitted-Cross-Domain-Policies','master-only');
-    res.header('Content-Security-Policy','report-uri /csp_report_parser');
+    res.header('Content-Security-Policy',"default-src 'self'");
     next();
 });
 
