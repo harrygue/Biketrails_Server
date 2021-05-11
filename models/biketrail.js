@@ -6,6 +6,8 @@ const biketrailSchema = new mongoose.Schema({
     name: String,
     category: String,
     description: String,
+    likes:Number,
+    likesUserIds:[String],
     location:String,
     lat:Number,
     lng:Number,

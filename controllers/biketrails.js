@@ -151,6 +151,27 @@ const createBikeTrail = async(req,res) => {
     }  
 };
 
+// UPDATE LIKES
+const updateBTlikes = async (req,res) => {
+    try{
+        const {newLikes,userId} = req.body
+        console.log('LIKES: ',newLikes)
+        console.log('userId: ',userId)
+        const existingBiketrail = await Biketrail.findById(req.params.id)
+        console.log(existingBiketrail.likes)
+        if (existingBiketrail.author.id !== userId && !existingBiketrail.likesUserIds.includes(userId)){
+            const updatedBiketrail = existingBiketrail
+            updatedBiketrail.likes = newLikes
+            updatedBiketrail.likesUserIds.push(userId)
+            let biketrail = await Biketrail.findByIdAndUpdate(req.params.id,updatedBiketrail,{new:true}); // new option to return updated biketral
+            res.status(200).json({biketrail});
+        }
+    } catch(error){
+        console.log("Error in edit Biketrail: ",error);
+        res.status(409).json({error})
+    }
+}
+
 // UPATE BIKETRAIL  with GPX files (ASYNC / AWAIT)
 const updateBikeTrail = async(req,res) => {
     try {
@@ -246,4 +267,4 @@ function escapeRegex(text) {
 };
 
 
-module.exports = {getBikeTrails,getBikeTrail,createBikeTrail,updateBikeTrail,deleteBikeTrail}
+module.exports = {getBikeTrails,getBikeTrail,createBikeTrail,updateBikeTrail,deleteBikeTrail,updateBTlikes}

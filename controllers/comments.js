@@ -51,8 +51,28 @@ const getComment = async(req,res) => {
     }
 };
 
+// UPDATE COMMENT LIKES
+const updateCommentLikes = async(req,res) => {
+    try{
+        const {newLikes,userId} = req.body
+        console.log('LIKES: ',newLikes)
+        console.log('userId: ',userId)
+        let existingComment = await Comment.findById(req.params.comment_id)
+        console.log(existingComment.author.id)
+        if (existingComment.author.id !== userId && !existingComment.likesUserIds.includes(userId)){
+            const updatedComment = existingComment
+            updatedComment.likes = newLikes
+            updatedComment.likesUserIds.push(userId)
+            let comment = await Comment.findByIdAndUpdate(req.params.comment_id,updatedComment,{new:true}); // new option to return updated biketral
+            res.status(200).json({comment});
+        }
+    } catch(error){
+        console.log("Error in edit Biketrail: ",error);
+        res.status(409).json({error})
+    }
+}
+
 // Update comment - put
-// router.put("/:comment_id",middleware.checkCommentOwnership,
 const updateComment = async(req,res) => {
     try {
         console.log("hit update route; ",req.body.comment);
@@ -83,4 +103,4 @@ const deleteComment = async(req,res) => {
     }
 };
 
-module.exports = {createComment,getComment,updateComment,deleteComment}
+module.exports = {createComment,getComment,updateComment,deleteComment,updateCommentLikes}
