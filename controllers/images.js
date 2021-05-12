@@ -27,45 +27,30 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
-
-// Image - New Form
-// router.get("/new",middleware.checkBiketrailOwnership,async(req,res) => {
-//     try {
-//         let biketrail = await Biketrail.findById(req.params.id);
-//         // console.log("immage/new - route: ",biketrail);
-//         res.render("images/new",{biketrail:biketrail});
-//     } catch (error) {
-//         console.log("ERROR: cannot get image upload form!",error);
-//         req.flash("error","ERROR: cannot get image upload form!");
-//         res.redirect("/biketrails");
-//     }
-// });
-
+// 
 // Image - create
 // router.post("/",middleware.checkBiketrailOwnership,upload.single('image'),
 const createImage = async(req,res) => {
     try {
-        console.log('HIT CREATE IMAGE ROUTE')
-        console.log(req.file)
-        console.log(req.body)
+        // console.log('HIT CREATE IMAGE ROUTE')
+        // console.log(req.file)
+        // console.log(req.body)
         let result = await cloudinary.uploader.upload(req.file.path);
         req.body.image = result.secure_url;
         req.body.image_id = result.public_id;
         let newImage = req.body;
-        console.log("newImage: ",newImage);
+        // console.log("newImage: ",newImage);
         let foundBiketrail = await Biketrail.findById(req.params.id);
         let image = await Image.create(newImage);
         foundBiketrail.images.push(image);
         foundBiketrail.save();
-        console.log("created new image for Biketrail ",foundBiketrail.name);
+        // console.log("created new image for Biketrail ",foundBiketrail.name);
         // req.flash("success","Image added");
         // res.redirect("/biketrails/"+req.params.id);
         res.status(201).json({biketrail:foundBiketrail})
     } catch (error) {
         console.log("ERROR: cannot upload image! ",error);
-        //req.flash("error","ERROR: cannot upload image!");
-        //res.redirect("/biketrails");
-        res.status(409).json({error})
+//         res.status(409).json({error})
     }
 };
 
@@ -73,12 +58,12 @@ const createImage = async(req,res) => {
 // router.get("/",middleware.checkBiketrailOwnership,
 const getImages = async(req,res) => {
     try {
-        console.log("hit Show images route");
+        // console.log("hit Show images route");
         // don't forget populate("images").exec otherwise pictures are not displayed in ejs view !!!
         let foundBiketrail = await Biketrail.findById(req.params.id).populate("images").exec();
         // console.log("found Biketrail: ",foundBiketrail);
         if(req.isAuthenticated()){
-            console.log("is Authenticated !");
+            // console.log("is Authenticated !");
             user_id = req.user._id;
         }
         // return res.render("images/image_show",{biketrail:foundBiketrail, user_id:user_id});
@@ -96,14 +81,14 @@ const getImages = async(req,res) => {
 // router.get("/:image_id/edit",middleware.checkBiketrailOwnership,
 const getImage = async(req,res) => {
     try {
-        console.log("hit images/edit route!!!");
-        console.log("Edit images - req.params.id: ",req.params.id);
-        console.log("Edit images - req.params.image_id: ",req.params.image_id);
+        // // console.log("hit images/edit route!!!");
+        // // console.log("Edit images - req.params.id: ",req.params.id);
+        // // console.log("Edit images - req.params.image_id: ",req.params.image_id);
 
         let image = await Image.findById(req.params.image_id);
 
-        console.log("load image edit form");
-        console.log("update image: ",image);
+        // // console.log("load image edit form");
+        // // console.log("update image: ",image);
 
         // res.render("images/edit",{image:image, biketrail_id:req.params.id});
         res.status(200).json({image:image, biketrail_id:req.params.id})
@@ -119,22 +104,19 @@ const getImage = async(req,res) => {
 // router.put("/:image_id",middleware.checkBiketrailOwnership,
 const updateImage = async(req,res) => {
     try {
-        console.log("hit update route");
+        // console.log("hit update route");
 
         let image = await Image.findByIdAndUpdate(req.params.image_id,req.body.image);
 
-        console.log("Image Title updated");
-        console.log(req.body.image);
-        console.log(req.params.image_id);
+        // console.log("Image Title updated");
+        // console.log(req.body.image);
+        // console.log(req.params.image_id);
 
-        // req.flash("success","successfully updated Image Title!");
-        // res.redirect("/biketrails/"+req.params.id);
+
         res.status(200).json({"success":"successfully updated Image Title!"})
     } catch (error) {
         console.log("ERROR: cannot update image!: ",error);
-        // req.flash("error","ERROR: cannot update image!");
-        // res.redirect("/biketrails");
-        res.status(404).json({"ERROR":error})
+//         res.status(404).json({"ERROR":error})
     }
 };
 
@@ -142,22 +124,18 @@ const updateImage = async(req,res) => {
 // router.delete("/:image_id",middleware.checkBiketrailOwnership,
 const deleteImage = async(req,res) => {
     try {
-        console.log("hit delete route");
+        // console.log("hit delete route");
 
         let image = await Image.findByIdAndDelete(req.params.image_id);
 
-        console.log(req.params);
-        console.log(`image: ${image}`);
-        console.log(`image.image_id: ${image.image_id}, \nreq.params.image_id: ${req.params.image_id} \nreq.params.id: ${req.params.id}`); 
+        // console.log(req.params);
+        // console.log(`image: ${image}`);
+        // console.log(`image.image_id: ${image.image_id}, \nreq.params.image_id: ${req.params.image_id} \nreq.params.id: ${req.params.id}`); 
 
         await cloudinary.v2.uploader.destroy(image.image_id);
-        // req.flash("success","Image deleted!");
-        // return res.redirect("back");
         res.status(200).json({message:"Image deleted!"})
     } catch (error) {
         console.log("ERROR: cannot delete image! ",error);
-        // req.flash("error",err.message);
-        // return res.redirect('back');
         res.status(404).json({"ERROR":error})
     }
 };

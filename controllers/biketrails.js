@@ -50,8 +50,8 @@ cloudinary.config({
 
 // Index page with fuzzy search
 const getBikeTrails = async(req,res) => {
-    console.log("hit getBikeTrails")
-    console.log(req.query);
+    // console.log("hit getBikeTrails")
+    // console.log(req.query);
     try {
         if(req.query.search && req.query.search != ""){
             const regex = new RegExp(escapeRegex(req.query.search), 'gi');
@@ -87,12 +87,12 @@ const getBikeTrails = async(req,res) => {
 // ASYNC/AWAIT
 // SHOW Biketrail form
 const getBikeTrail = async(req,res) => {
-    console.log(req.params.id)
+    // console.log(req.params.id)
     try {
         let user_id = undefined;
         let foundBiketrail = await Biketrail.findById(req.params.id).populate("comments").populate("images").exec();
         
-        console.log("Inside Show Route: ",foundBiketrail.name);
+        // console.log("Inside Show Route: ",foundBiketrail.name);
         if(req.isAuthenticated()){
             console.log("is Authenticated !");
             user_id = req.user._id;
@@ -112,16 +112,16 @@ const getBikeTrail = async(req,res) => {
 // -------------------------------------------------------------------------
 const createBikeTrail = async(req,res) => {
     // upload gpx tracks
-    console.log("CREATE")
-    console.log(req.body)
-    console.log(req.file)
+    // // // console.log(req.body)
+    // // // console.log("CREATE")
+    // // // console.log(req.file)
     try {
         let newBiketrail = req.body;
         newBiketrail.author = {id:req.userId,userName:req.username}; // {id:"5e1b376eebb09a36303fbdb6",userName:"Adminuser"}// {id:req.user._id,userName:req.user.username};
 
         if(req.file){
-            console.log('hit req.file')
-            console.log(typeof(req.file))
+            // // // console.log('hit req.file')
+            // // // console.log(typeof(req.file))
             const file = fsExtra.readFileSync(req.file.path,'utf-8'); 
             newBiketrail.gpxFile = file;
             newBiketrail.gpxFileName = req.file.path;
@@ -131,11 +131,11 @@ const createBikeTrail = async(req,res) => {
         }
 
         let geoData = newBiketrail.location ? await geocoder.geocode(newBiketrail.location) : null;
-        console.log(geoData)
+        // // console.log(geoData)
         if(!geoData){
             console.log("no geodata"); // biketrail will be created anyway
         } else {
-            console.log("geocode data found!");
+            // // console.log("geocode data found!");
             newBiketrail.lat = geoData[0].latitude;
             newBiketrail.lng = geoData[0].longitude;
             newBiketrail.location = geoData[0].formattedAddress;
@@ -155,10 +155,10 @@ const createBikeTrail = async(req,res) => {
 const updateBTlikes = async (req,res) => {
     try{
         const {newLikes,userId} = req.body
-        console.log('LIKES: ',newLikes)
-        console.log('userId: ',userId)
+        // console.log('LIKES: ',newLikes)
+        // console.log('userId: ',userId)
         const existingBiketrail = await Biketrail.findById(req.params.id)
-        console.log(existingBiketrail.likes)
+        // console.log(existingBiketrail.likes)
         if (existingBiketrail.author.id !== userId && !existingBiketrail.likesUserIds.includes(userId)){
             const updatedBiketrail = existingBiketrail
             updatedBiketrail.likes = newLikes
@@ -175,20 +175,20 @@ const updateBTlikes = async (req,res) => {
 // UPATE BIKETRAIL  with GPX files (ASYNC / AWAIT)
 const updateBikeTrail = async(req,res) => {
     try {
-        console.log('HIT UPDATE BT')
-        console.log('req.body:',req.body)
+        // console.log('HIT UPDATE BT')
+        // console.log('req.body:',req.body)
 
         let updatedBiketrail = req.body;
 
         if(req.file){
-            console.log('req.file',req.file)
+            // console.log('req.file',req.file)
             const file = fsExtra.readFileSync(req.file.path,'utf-8'); 
             updatedBiketrail.gpxFile = file;
             updatedBiketrail.gpxFileName = req.file.path;
         } else {
             const existingBiketrail = await Biketrail.findById(req.params.id)
             if(existingBiketrail && existingBiketrail.gpxFile){
-                console.log('take existing gpx File')
+                // console.log('take existing gpx File')
                 updatedBiketrail.gpxFile = existingBiketrail.gpxFile
                 updatedBiketrail.gpxFileName = existingBiketrail.gpxFileName
             } else {
@@ -199,18 +199,18 @@ const updateBikeTrail = async(req,res) => {
 
         let geoData = req.body.location && await geocoder.geocode(req.body.location);
         if(!geoData){
-            console.log("no geodata");
+            // console.log("no geodata");
             res.status(204).json({message:'No Geodata'})
         } else {
-            console.log("geocode data found!");
+            // console.log("geocode data found!");
             updatedBiketrail.lat = geoData[0].latitude;
             updatedBiketrail.lng = geoData[0].longitude;
             updatedBiketrail.location = geoData[0].formattedAddress;
         }
 
         let biketrail = await Biketrail.findByIdAndUpdate(req.params.id,updatedBiketrail,{new:true}); // new option to return updated biketral
-        console.log('UPDATED biketrail: ',biketrail.gpxFileName)
-        console.log(biketrail.name)
+        // console.log('UPDATED biketrail: ',biketrail.gpxFileName)
+        // console.log(biketrail.name)
         res.status(200).json({biketrail});
 
     } catch (error) {
@@ -225,20 +225,20 @@ const deleteBikeTrail = async(req,res) => {
     try {
         let biketrail = await Biketrail.findById(req.params.id);
         await Comment.deleteMany({_id: { $in: biketrail.comments}});
-        console.log("Biketrail comments deleted!");
+        // console.log("Biketrail comments deleted!");
 
         // loop through images and if last one has been deleted redirect
         let i=0;
         const len = biketrail.images.length;
-        console.log("number of images: ",len);
+        // console.log("number of images: ",len);
         if(len ===0){
             await Biketrail.findByIdAndDelete(req.params.id);
-            console.log("there were no images!");
+            // console.log("there were no images!");
             return res.status(200).json({"message":"biketrail successfully deleted"});
         } 
 
         biketrail.images.map(async (image) => {
-            console.log("image inside biketrail delete: ",image);
+            // console.log("image inside biketrail delete: ",image);
             let foundImage = await Image.findById(image);
             if(foundImage != null){
                 await cloudinary.v2.uploader.destroy(foundImage.image_id);
@@ -246,11 +246,11 @@ const deleteBikeTrail = async(req,res) => {
             }
 
             i++;
-            console.log(i);
+            // console.log(i);
             if(i===len){
                 await Image.deleteMany({_id: { $in: biketrail.images}});
                 await Biketrail.findByIdAndDelete(req.params.id);
-                console.log("Biketrail, comments and all images deleted!");
+                // console.log("Biketrail, comments and all images deleted!");
                 return res.status(200).json({"message":"biketrail successfully deleted"});
             }
         });

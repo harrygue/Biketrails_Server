@@ -16,11 +16,11 @@ const createComment = async(req,res) => {
         newComment.creation_date = moment().format();
         newComment.author = {id:req.userId,userName:req.username};// {id:req.user._id,userName:req.user.username};
         let foundBiketrail = await Biketrail.findById(req.params.id);
-        console.log(newComment)
+        // console.log(newComment)
         let comment = await Comment.create(newComment);
         foundBiketrail.comments.push(comment);
         foundBiketrail.save();
-        console.log("created new comment for biketrail: \n",foundBiketrail.name);
+        // console.log("created new comment for biketrail: \n",foundBiketrail.name);
         res.status(201).json({message:'Created Comment'})
     } catch (error){
         console.log("Error at post new comment route in find biketrail: ",error);
@@ -45,8 +45,6 @@ const getComment = async(req,res) => {
 
     } catch (error) {
         console.log("ERROR: cannot get edit view!",error);
-        // req.flash("error","ERROR: cannot get edit view!");
-        // res.redirect("/biketrails");
         res.status(409).json({error})
     }
 };
@@ -55,10 +53,10 @@ const getComment = async(req,res) => {
 const updateCommentLikes = async(req,res) => {
     try{
         const {newLikes,userId} = req.body
-        console.log('LIKES: ',newLikes)
-        console.log('userId: ',userId)
+        // console.log('LIKES: ',newLikes)
+        // console.log('userId: ',userId)
         let existingComment = await Comment.findById(req.params.comment_id)
-        console.log(existingComment.author.id)
+        // console.log(existingComment.author.id)
         if (existingComment.author.id !== userId && !existingComment.likesUserIds.includes(userId)){
             const updatedComment = existingComment
             updatedComment.likes = newLikes
@@ -75,16 +73,14 @@ const updateCommentLikes = async(req,res) => {
 // Update comment - put
 const updateComment = async(req,res) => {
     try {
-        console.log("hit update route; ",req.body.comment);
+        // console.log("hit update route; ",req.body.comment);
         let commentToUpdate = await Comment.findById(req.params.comment_id)
         commentToUpdate.text = req.body.comment
         let comment = await Comment.findByIdAndUpdate(req.params.comment_id,commentToUpdate);
-        console.log("Comment updated");
+        // console.log("Comment updated");
         res.status(200).json({message:'Comment updated!'})
     } catch (error) {
         console.log("ERROR: cannot update comment! ",error);
-        // req.flash("error","ERROR: cannot update comment!");
-        // res.redirect("/biketrails");
         res.status(404).json({error})
     }
 };
@@ -95,7 +91,7 @@ const deleteComment = async(req,res) => {
     console.log('hit delete Comment')
     try {
         await Comment.findByIdAndDelete(req.params.comment_id);
-        console.log("Comment deleted");
+        // console.log("Comment deleted");
         res.status(200).json({message:'Comment deleted'})
     } catch (error) {
         console.log("ERROR: cannot delete comment! ",error);
