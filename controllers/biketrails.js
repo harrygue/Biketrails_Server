@@ -71,8 +71,23 @@ const getBikeTrails = async(req,res) => {
             });
         } else {
             let allBiketrails = await Biketrail.find({}).populate("images").exec();
+            let biketrails = []
+            for(let trail of allBiketrails){
+                const biketrail = {
+                    _id:trail._id,
+                    name:trail.name,
+                    authorName:trail.author.username,
+                    description:trail.description,
+                    createdAt:trail.createdAt,
+                    location:trail.location,
+                    category:trail.category,
+                    image0:trail.images.length ? trail.images[0].image : null
+                }
+                biketrails.push(biketrail)
+            }
+
             res.status(200).json({
-                biketrails:allBiketrails,
+                biketrails,
                 categories:JSON.stringify(categories), // for the category dropdown on the biketrails/index page
                 categoryID:"0" // send categoryID to show selected Dropdown category
             });
@@ -83,6 +98,17 @@ const getBikeTrails = async(req,res) => {
         res.json({error})
     }
 };
+
+/*
+    id={biketrail._id} 
+    name={biketrail.name}
+    author={biketrail.author.userName}
+    discription={biketrail.description}
+    createdAt={biketrail.createdAt}
+    location={biketrail.location}
+    category={biketrail.category}
+    image={biketrail.images.length >0 && biketrail.images[0].image}         
+*/
 
 // ASYNC/AWAIT
 // SHOW Biketrail form
